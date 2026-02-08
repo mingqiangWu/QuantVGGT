@@ -8,9 +8,9 @@ from .quarot_utils import random_hadamard_matrix
 from .quant_utils import WeightQuantizer, ActivationQuantizer
 
 
-class VGGTQuantizedLinear(nn.Module):
+class SmoothRotQuantizedLinear(nn.Module):
     def __init__(self, args, linear: nn.Linear):
-        super(VGGTQuantizedLinear, self).__init__()
+        super(SmoothRotQuantizedLinear, self).__init__()
 
         self.args = args
         self.not_rot = args.not_rot
@@ -24,6 +24,8 @@ class VGGTQuantizedLinear(nn.Module):
 
         self.act_quantizer = ActivationQuantizer(bits=args.a_bits, sym=not(args.a_asym), lac=self.lac,
                                                  groupsize=args.a_groupsize, )
+        
+        
         if self.lwc:
             lwc_dim = self.linear.weight.shape[0] if self.lwc else -1
             init_value = 4.
@@ -35,6 +37,7 @@ class VGGTQuantizedLinear(nn.Module):
             self.act_quantizer.register_buffer("act_scale", None)  
             self.register_parameter("channel_wise_scale",
                                 nn.Parameter(torch.ones((1, self.linear.weight.shape[1])))) 
+            
             self.smooth_quant_momentum = 0.95
             self.smooth_quant_alpha = 0.5
             self.smooth_quant_running_stat = True 
@@ -43,6 +46,7 @@ class VGGTQuantizedLinear(nn.Module):
             self.register_parameter("rotation_matrix",
                                   torch.nn.Parameter(random_hadamard_matrix(self.linear.weight.shape[1], "cuda").to(dtype=torch.float32)))
 
+        
         self.ori_mode = True
         self.train_mode = False
         self.eval_mode = False
@@ -78,6 +82,7 @@ class VGGTQuantizedLinear(nn.Module):
                 assert self.act_quantizer.act_scale.mean() != 0
 
         return F.linear(hidden_states, weight, bias)
+    
 
     def _train_forward(self, hidden_states):
         weight = self.linear.weight.data
@@ -119,6 +124,7 @@ class VGGTQuantizedLinear(nn.Module):
             return self._train_forward(hidden_states) 
         if self.eval_mode:
             return self._eval_forward(hidden_states)
+
 
     def reparameterize(self):
         target_device = self.linear.weight.device
