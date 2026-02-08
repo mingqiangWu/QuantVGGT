@@ -40,8 +40,8 @@ class Aggregator(nn.Module):
         proj_bias (bool): Whether to include bias in the output projection.
         ffn_bias (bool): Whether to include bias in MLP layers.
         patch_embed (str): Type of patch embed. e.g., "conv" or "dinov2_vitl14_reg".
-        aa_order (list[str]): The order of alternating attention, e.g. ["frame", "global"]. 交替注意力的顺序
-        aa_block_size (int): How many blocks to group under each attention type before switching. If not necessary, set to 1.每种注意力类型
+        aa_order (list[str]): The order of alternating attention, e.g. ["frame", "global"].
+        aa_block_size (int): How many blocks to group under each attention type before switching. If not necessary, set to 1.
         qk_norm (bool): Whether to apply QK normalization.
         rope_freq (int): Base frequency for rotary embedding. -1 to disable.
         init_values (float): Init scale for layer scale.
@@ -203,11 +203,7 @@ class Aggregator(nn.Module):
         if C_in != 3:
             raise ValueError(f"Expected 3 input channels, got {C_in}")
 
-        # # ⭐
-        # print(f"images device: {images.device}")
-        # print(f"_resnet_mean device: {self._resnet_mean.device}")
-        # print(f"_resnet_std device: {self._resnet_std.device}")
-        # Normalize images and reshape for patch embed
+
         images = (images - self._resnet_mean) / self._resnet_std
   
         # Reshape to [B*S, C, H, W] for patch embedding
@@ -229,7 +225,7 @@ class Aggregator(nn.Module):
 
         pos = None
         if self.rope is not None:
-            # 2
+    
             pos = self.position_getter(B * S, H // self.patch_size, W // self.patch_size, device=images.device)
 
         if self.patch_start_idx > 0:
@@ -246,7 +242,7 @@ class Aggregator(nn.Module):
         global_idx = 0
         output_list = []
 
-        # 交替3，4
+  
         for _ in range(self.aa_block_num):
             for attn_type in self.aa_order:
                 if attn_type == "frame":

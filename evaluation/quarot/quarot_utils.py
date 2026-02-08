@@ -1,4 +1,4 @@
-import torch.nn.functional as F  # 导入functional模块并简写为F
+import torch.nn.functional as F  
 
 def get_orthogonal_matrix(self):
     if self.rotate_mode == 'random':
@@ -158,6 +158,9 @@ def get_hadK(n, transpose=False):
 
 
 def matmul_hadU(X, transpose=False):
+    # print("X")
+    # print(X)
+
     n = X.shape[-1]
     hadK, K = get_hadK(n, transpose)
     input = X.clone().view(-1, n, 1)
@@ -169,6 +172,7 @@ def matmul_hadU(X, transpose=False):
         output[:, :, 1, :] = input[:, :, 0, :] - input[:, :, 1, :]
         output = output.view(input.shape[0], input.shape[1], -1)
         (input, output) = (output, input)
+    
     del output
 
     if K > 1:
@@ -178,6 +182,8 @@ def matmul_hadU(X, transpose=False):
         # Use bcast instead
         input = hadK.view(1, K, K).to(input) @ input
 
+    # print("input.view(X.shape) / torch.tensor(n).sqrt()")
+    # print(input.view(X.shape) / torch.tensor(n).sqrt())
     return input.view(X.shape) / torch.tensor(n).sqrt()
 
 
@@ -186,26 +192,22 @@ def matmul_hadUt(X):
 
 
 def ensure_power_of_two(x):
-    """将输入张量的最后一维填充至最近的2的幂次方"""
-    n = x.shape[-2]  # 假设特征维度在倒数第二维（如[9,9,1]中的9）
-    next_power = 1 << (n - 1).bit_length()  # 计算最近的2的幂次方
+    n = x.shape[-2]  
+    next_power = 1 << (n - 1).bit_length() 
     if n != next_power:
-        # 填充至next_power（使用0填充）
         pad = next_power - n
-        x = F.pad(x, (0, 0, 0, pad))  # 仅填充特征维度
+        x = F.pad(x, (0, 0, 0, pad))  
     return x
 
-# 随机初始化一个 hadmard矩阵
 def random_hadamard_matrix(size, device):
     # See https://cornell-relaxml.github.io/quip-sharp/,这段代码来自 QUIP-Sharp，随机 Hadamard 变换
     # Section "Randomized Hadamard Transformation"
     # 生成一个 [low,high)，生成 size 个随机数
     Q = torch.randint(low=0, high=2, size=(size,)).to(torch.float64)
-    # 0/1 转换为 -1/+1
+
     Q = Q * 2 - 1
-    # 转化为对角矩阵
     Q = torch.diag(Q)
-    # Q = ensure_power_of_two(Q)
+
     return matmul_hadU(Q).to(device)
 
 

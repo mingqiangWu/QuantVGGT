@@ -6,7 +6,7 @@ from termcolor import colored
 import pprint
 
 
-class  VGGTQuantizedConfig:
+class SmoothRotQuantConfig:
     def __init__(self):
         # General Arguments
         self.seed = 0                  # Random seed for HuggingFace and PyTorch
@@ -15,12 +15,12 @@ class  VGGTQuantizedConfig:
         # Activation Quantization Arguments
         self.a_bits = 16              # Number of bits for inputs of the linear layers
         self.a_groupsize = -1         # Groupsize for activation quantization
-        self.a_asym = False           # Use asymmetric activation quantization
+        self.a_asym = False         # Use asymmetric activation quantization
 
         # Weight Quantization Arguments
         self.w_bits = 16              # Number of bits for weights of the linear layers
         self.w_groupsize = -1         # Groupsize for weight quantization
-        self.w_asym = False           # Use asymmetric weight quantization
+        self.w_asym = False           # Use asymmetric weight quantization✅
         self.gptq = False             # Use GPTQ for weight quantization
         self.gptq_mse = False         # Use MSE search for optimal clipping threshold
         self.percdamp = 0.01          # Percent of average Hessian diagonal for dampening
@@ -55,14 +55,15 @@ class  VGGTQuantizedConfig:
  
 
         # Experiments Arguments
-        self.output_dir = "./outputs" # Output directory path
+        self.output_dir = "./evaluation/outputs" # Output directory path ⭐
+        # self.output_dir = "./outputs" # Output directory path ⭐
         self.exp_name = "exp_5b_test"         # Experiment name
         self.cache_dir = None
     
     def update_nsamples(self,calib_data_num):
         self.nsamples = calib_data_num
 
-    def update_from_args(self, wbit, abit, model_id, not_smooth, not_rot, lwc , lac,rv ,exp_name=None):
+    def update_from_args(self, wbit, abit, model_id, not_smooth, not_rot, lwc , lac,rv ,exp_name):
         self.w_bits = wbit
         self.a_bits = abit
         self.not_smooth = not_smooth
@@ -70,6 +71,7 @@ class  VGGTQuantizedConfig:
         self.lwc = lwc
         self.lac = lac
         self.rv = rv
+  
         if self.a_groupsize > -1:
             raise NotImplementedError
             
@@ -86,7 +88,7 @@ class  VGGTQuantizedConfig:
         os.makedirs(self.exp_dir, exist_ok=True)
 
 def get_config():
-    return VGGTQuantizedConfig()
+    return SmoothRotQuantConfig()
 
 
 def parser_gen():
@@ -149,7 +151,7 @@ def parser_gen():
     parser.add_argument("--diag_init", type=str, default="sq_style", choices=["sq_style", "one_style"], 
                         help='The way to initialize per-channel scaling. Default is SmoothQuant style.')
     parser.add_argument("--diag_alpha", type=float, default=0.3, 
-                        help='Hyperparameter for  style initialization of per-channel scaling.')
+                        help='Hyperparameter for the SmoothQuant style initialization of per-channel scaling.')
     parser.add_argument("--warmup", default=False, action="store_true", help="Warm up the learning rate during training.")
     parser.add_argument("--deactive_amp", default=False, action="store_true", help="Disable AMP training.")
     parser.add_argument("--direct_inv", default=False, action="store_true", 

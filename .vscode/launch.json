@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug test_co3d_1",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/evaluation/test_co3d_1.py",
+            "args": [
+                "--model_path", "/data2/fwl/VGGT_quant/VGGT-1B/model_tracker_fixed_e20.pt",
+                "--co3d_dir", "/data1/3d_datasets/",
+                "--co3d_anno_dir", "/data2/fwl/datasets/co3d_v2_annotations/",
+                "--seed", "0"
+            ],
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "5",  // 指定GPU设备
+                "PYTHONUNBUFFERED": "1"       // 实时输出日志
+            },
+            "console": "integratedTerminal",
+            "justMyCode": false,  // 允许调试第三方库代码（如QuantizedLinear）
+            "stopOnEntry": false,
+            "redirectOutput": true
+        }
+    ]
+}

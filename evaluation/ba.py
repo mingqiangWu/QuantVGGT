@@ -7,7 +7,7 @@ from vggt.utils.pose_enc import pose_encoding_to_extri_intri
 from vggt.utils.geometry import unproject_depth_map_to_point_map
 from tensor_to_pycolmap import batch_matrix_to_pycolmap, pycolmap_to_batch_matrix
 
-# from lightglue import ALIKED, SuperPoint, SIFT
+from lightglue import ALIKED, SuperPoint, SIFT
 
 
 _RESNET_MEAN = [0.485, 0.456, 0.406]
