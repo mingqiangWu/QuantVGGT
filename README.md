@@ -80,8 +80,6 @@ bash make_calibation.sh # Filter and Save Calibration Set
 bash run_co3d.sh # Calibration Training and Evaluation on Co3D
 ```
 
-More detailed parameter settings.
-
 **Generate filtered Co3d calibration data**
 
 ```
@@ -91,7 +89,7 @@ python Quant_VGGT/vggt/evaluation/make_calibation.py \
     --co3d_anno_dir co3d_v2_annotations/ \
     --seed 0 \
     --cache_path all_calib_data.pt \ # Data to be filtered for calibration set
-    --save_path calib_data_42.pt \ # Save path for calibration set
+    --save_path calib_data.pt \ # Save path for calibration set
     --class_mode all \  # Category selection mode for calibration data
     --kmeans_n 6 \ # Number of cluster centers
     --kmeans_m 7 \  # Number of samples per category
@@ -108,7 +106,7 @@ python Quant_VGGT/vggt/evaluation/run_co3d.py \
     --seed 0 \
     --lac \ 
     --lwc \
-    --cache_path calib_data_42.pt \ # calibration data path
+    --cache_path calib_data.pt \ # calibration data path
     --class_mode all \	# Category selection mode for calibration data
     --exp_name a44_uqant \	
     --resume_qs \ # Load quantized model from exp_name
@@ -125,7 +123,7 @@ python Quant_VGGT/vggt/evaluation/run_7andN.py\
   --lwc \
   --lac \
   --exp_name quant_w4a4\
-  --cache_path calib_data_42.pt \
+  --cache_path calib_data.pt \
   --class_mode all \
   --output_dir "Quant_VGGT/vggt/eval_results" \
   --kf 100 \ # Sample every keyframe.
