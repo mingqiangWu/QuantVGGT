@@ -35,7 +35,7 @@ Weilun Feng1,2∗, Haotong Qin3∗, Mingqiang Wu1,2∗, Chuanguang Yang1†, Yuq
 
 - **[2026.02.09]** 😉The calibration dataset and quantized weights have been updated in the Hugging Face repository. Please [check](https://huggingface.co/wlfeng/QuantVGGT).
 - **[2026.02.08]** 🎉Code for calibration training, evaluation on the 7-Scene and NRGBD datasets, and calibration set selection is now available.
-- **[2025.10.10]🎉** Evaluation code for reproducing our camera pose estimation results on Co3D is now available.
+- **[2025.10.10]** 🎉Evaluation code for reproducing our camera pose estimation results on Co3D is now available.
 
 
 
